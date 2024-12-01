@@ -4,10 +4,10 @@ import random
 import json
 from dict import app, db, bana_bd, bana_gl, bana_kt, os, jwt
 from flask import render_template, redirect, url_for, flash, request, jsonify, send_from_directory, abort
-from dict.models import Word, User, user_word, DailyWord, TokenBlocklist
+from dict.models import Word, User, user_word, DailyWord, TokenBlocklist,binhdinh
 from dict.forms import RegisterForm, LoginForm, SearchForm, BookmarkForm
 from flask_paginate import get_page_parameter
-from flask_sqlalchemy import Pagination
+from flask_sqlalchemy import pagination
 from flask_login import login_user, logout_user, login_required
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, current_user, JWTManager
 
@@ -164,19 +164,22 @@ def update():
 
 @app.route('/api/search', methods=['GET'])
 def search_page():
-    word_per_page = 20
-    page = request.args.get('page', 1, type = int)
+    # word_per_page = 20
+    # page = request.args.get('page', 1, type = int)
     searched_word = request.args.get('searched_word','', type=None)
     if searched_word == '':
         return abort(400)
-    words = Word.query.filter(Word.name.like('%' + searched_word + '%'))
-    words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
-    words_dict = [word.to_dict() for word in words.items]
+    print(f"duyly {searched_word}")
+    binhdinhs = binhdinh.query.filter(binhdinh.tiengViet.like('%' + searched_word + '%')).limit(10).all()
+    print(f"duyly {binhdinhs}")
+    # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
+    words_dict = [binhdinh.to_dict() for binhdinh in binhdinhs]
 
-    next_link = None if words.next_num == None else f'http://localhost:5000/api/search?searched_word={searched_word}&page={words.next_num}'
-    prev_link = None if words.prev_num == None else f'http://localhost:5000/api/search?searched_word={searched_word}&page={words.prev_num}'
+    # next_link = None if words.next_num == None else f'http://localhost:5000/api/search?searched_word={searched_word}&page={words.next_num}'
+    # prev_link = None if words.prev_num == None else f'http://localhost:5000/api/search?searched_word={searched_word}&page={words.prev_num}'
     
-    return jsonify({"next": next_link, "previous": prev_link,"results": words_dict})
+    # return jsonify({"next": next_link, "previous": prev_link,"results": words_dict})
+    return jsonify({"results": words_dict})
         
 
 @app.route("/api/daily", methods=["GET"])

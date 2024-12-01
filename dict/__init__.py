@@ -14,7 +14,7 @@ CORS(app)
 dir = os.path.dirname(__file__)
 
 # run_with_ngrok(app)
-dir_db = os.path.join(dir,'dict.db')
+dir_db = os.path.join(dir,'ngulieuvanban.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+ dir_db
 app.config['SECRET_KEY'] ='1b253b240b0a78e764b9ec90'
 app.config["JWT_SECRET_KEY"] = "DW8jOOS4JC0zaseOb9jgaIYVsnkmVseHXhSgfICKBqNHuUJTmBB7dmpz6Bzcgqt"

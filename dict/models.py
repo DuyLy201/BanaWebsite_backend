@@ -50,8 +50,6 @@ class User(db.Model, UserMixin):
         ).order_by(
             Word.id.asc()
         )
-
-    
 class Word(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(), nullable=False, unique=True)
@@ -61,6 +59,26 @@ class Word(db.Model):
     GiaLai = db.Column(db.String())
     def to_dict(self):
         return {"id": self.id, "name": self.name, "pos": self.pos, "BinhDinh": self.BinhDinh, "KonTum": self.KonTum, "GiaLai": self.GiaLai}
+    
+class binhdinh(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    tiengBana = db.Column(db.String())
+    tiengViet = db.Column(db.String())
+    def to_dict(self):
+        return {"id": self.id, "tiengBana": self.tiengBana, "tiengViet": self.tiengViet}    
+class gialai(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    tiengBana = db.Column(db.String())
+    tiengViet = db.Column(db.String())
+    def to_dict(self):
+        return {"id": self.id, "tiengBana": self.tiengBana, "tiengViet": self.tiengViet}
+
+class kontum(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    tiengBana = db.Column(db.String())
+    tiengViet = db.Column(db.String())
+    def to_dict(self):
+        return {"id": self.id, "tiengBana": self.tiengBana, "tiengViet": self.tiengViet}    
     
 class DailyWord(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
