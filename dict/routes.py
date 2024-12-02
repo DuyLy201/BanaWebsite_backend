@@ -4,7 +4,7 @@ import random
 import json
 from dict import app, db, bana_bd, bana_gl, bana_kt, os, jwt
 from flask import render_template, redirect, url_for, flash, request, jsonify, send_from_directory, abort
-from dict.models import Word, User, user_word, DailyWord, TokenBlocklist,binhdinh
+from dict.models import Word, User, user_word, DailyWord, TokenBlocklist, binhdinh, gialai, kontum
 from dict.forms import RegisterForm, LoginForm, SearchForm, BookmarkForm
 from flask_paginate import get_page_parameter
 from flask_sqlalchemy import pagination
@@ -167,14 +167,25 @@ def search_page():
     # word_per_page = 20
     # page = request.args.get('page', 1, type = int)
     searched_word = request.args.get('searched_word','', type=None)
+    language = request.args.get('language','', type=None)
     if searched_word == '':
         return abort(400)
     print(f"duyly {searched_word}")
-    binhdinhs = binhdinh.query.filter(binhdinh.tiengViet.like('%' + searched_word + '%')).limit(10).all()
-    print(f"duyly {binhdinhs}")
-    # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
-    words_dict = [binhdinh.to_dict() for binhdinh in binhdinhs]
-
+    if language == 'BinhDinh':
+        binhdinhs = binhdinh.query.filter(binhdinh.tiengViet.like('%' + searched_word + '%')).limit(10).all()
+        # print(f"duyly {binhdinhs}")
+        # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
+        words_dict = [binhdinh.to_dict() for binhdinh in binhdinhs]
+    if language == 'GiaLai':
+        gialais = gialai.query.filter(gialai.tiengViet.like('%' + searched_word + '%')).limit(10).all()
+        # print(f"duyly235 {gialais}")
+        # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
+        words_dict = [gialai.to_dict() for gialai in gialais] 
+    if language == 'KonTum':
+        kontums = kontum.query.filter(kontum.tiengViet.like('%' + searched_word + '%')).limit(10).all()
+        # print(f"duyly201 {kontums}")
+        # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
+        words_dict = [kontum.to_dict() for kontum in kontums]         
     # next_link = None if words.next_num == None else f'http://localhost:5000/api/search?searched_word={searched_word}&page={words.next_num}'
     # prev_link = None if words.prev_num == None else f'http://localhost:5000/api/search?searched_word={searched_word}&page={words.prev_num}'
     
