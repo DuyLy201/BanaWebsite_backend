@@ -79,7 +79,26 @@ class kontum(db.Model):
     tiengViet = db.Column(db.String())
     def to_dict(self):
         return {"id": self.id, "tiengBana": self.tiengBana, "tiengViet": self.tiengViet}    
-    
+
+class binhdinh_muccau(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    tiengBana = db.Column(db.String())
+    tiengViet = db.Column(db.String())
+    def to_dict(self):
+        return {"id": self.id, "tiengBana": self.tiengBana, "tiengViet": self.tiengViet}    
+class gialai_muccau(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    tiengBana = db.Column(db.String())
+    tiengViet = db.Column(db.String())
+    def to_dict(self):
+        return {"id": self.id, "tiengBana": self.tiengBana, "tiengViet": self.tiengViet}
+
+class kontum_muccau(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    tiengBana = db.Column(db.String())
+    tiengViet = db.Column(db.String())
+    def to_dict(self):
+        return {"id": self.id, "tiengBana": self.tiengBana, "tiengViet": self.tiengViet}   
 class DailyWord(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     word_id = db.Column(db.Integer(), db.ForeignKey('word.id'))

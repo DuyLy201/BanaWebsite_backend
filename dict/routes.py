@@ -4,7 +4,7 @@ import random
 import json
 from dict import app, db, bana_bd, bana_gl, bana_kt, os, jwt
 from flask import render_template, redirect, url_for, flash, request, jsonify, send_from_directory, abort
-from dict.models import Word, User, user_word, DailyWord, TokenBlocklist, binhdinh, gialai, kontum
+from dict.models import Word, User, user_word, DailyWord, TokenBlocklist, binhdinh, gialai, kontum, binhdinh_muccau, gialai_muccau, kontum_muccau
 from dict.forms import RegisterForm, LoginForm, SearchForm, BookmarkForm
 from flask_paginate import get_page_parameter
 from flask_sqlalchemy import pagination
@@ -192,6 +192,33 @@ def search_page():
     # return jsonify({"next": next_link, "previous": prev_link,"results": words_dict})
     return jsonify({"results": words_dict})
         
+@app.route('/api/related', methods=['GET'])
+def related_page():
+    searched_word = request.args.get('searched_word','', type=None)
+    language = request.args.get('language','', type=None)
+    if searched_word == '':
+        return abort(400)
+    print(f"duyly {searched_word}")
+    if language == 'BinhDinh':
+        binhdinhs = binhdinh_muccau.query.filter(binhdinh_muccau.tiengViet.like('%' + searched_word + '%')).limit(3).all()
+        # print(f"duyly {binhdinhs}")
+        # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
+        words_dict = [binhdinh_muccau.to_dict() for binhdinh_muccau in binhdinhs]
+    if language == 'GiaLai':
+        gialais = gialai_muccau.query.filter(gialai_muccau.tiengViet.like('%' + searched_word + '%')).limit(3).all()
+        # print(f"duyly235 {gialais}")
+        # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
+        words_dict = [gialai_muccau.to_dict() for gialai_muccau in gialais] 
+    if language == 'KonTum':
+        kontums = kontum_muccau.query.filter(kontum_muccau.tiengViet.like('%' + searched_word + '%')).limit(3).all()
+        # print(f"duyly201 {kontums}")
+        # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
+        words_dict = [kontum_muccau.to_dict() for kontum_muccau in kontums]         
+    # next_link = None if words.next_num == None else f'http://localhost:5000/api/search?searched_word={searched_word}&page={words.next_num}'
+    # prev_link = None if words.prev_num == None else f'http://localhost:5000/api/search?searched_word={searched_word}&page={words.prev_num}'
+    
+    # return jsonify({"next": next_link, "previous": prev_link,"results": words_dict})
+    return jsonify({"results": words_dict})
 
 @app.route("/api/daily", methods=["GET"])
 def daily_page():
