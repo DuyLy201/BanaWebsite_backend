@@ -15,6 +15,8 @@ class RegisterForm(FlaskForm):
         user = User.query.filter_by(username = username_to_check.data).first()
         if user:
             raise ValidationError('Username exists!')
+        if ' ' in username_to_check.data:
+            raise ValidationError('Username cannot contain spaces!')
         
     def validate_email_address(self, email_address_to_check):
         email= User.query.filter_by(email_address = email_address_to_check.data).first()
