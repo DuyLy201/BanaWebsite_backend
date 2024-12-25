@@ -10,3 +10,4 @@ flask_paginate
 flask-jwt-extended
 thefuzz
 flask_cors
+gunicorn
