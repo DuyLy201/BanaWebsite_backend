@@ -10,7 +10,7 @@ from flask_paginate import get_page_parameter
 from flask_sqlalchemy import pagination
 from flask_login import login_user, logout_user, login_required
 from flask_jwt_extended import create_access_token,get_jwt,get_jwt_identity, unset_jwt_cookies, jwt_required, current_user, JWTManager
-
+from thefuzz import fuzz
 
 @jwt.token_in_blocklist_loader
 def check_if_token_revoked(jwt_header, jwt_payload: dict) -> bool:
@@ -164,6 +164,8 @@ def update():
 
 @app.route('/api/search', methods=['GET'])
 def search_page():
+    print("den day nha")
+
     # word_per_page = 20
     # page = request.args.get('page', 1, type = int)
     searched_word = request.args.get('searched_word','', type=None)
@@ -172,17 +174,26 @@ def search_page():
         return abort(400)
     print(f"duyly {searched_word}")
     if language == 'BinhDinh':
-        binhdinhs = binhdinh.query.filter(binhdinh.tiengViet.like('%' + searched_word + '%')).limit(10).all()
+        binhdinhs = binhdinh.query.all()
+
+        words_dict = [binhdinh.to_dict() for binhdinh in binhdinhs]
+
+
+        # binhdinhs = binhdinh.query.filter(binhdinh.tiengViet.like('%' + searched_word + '%')).limit(10).all()
         # print(f"duyly {binhdinhs}")
         # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
-        words_dict = [binhdinh.to_dict() for binhdinh in binhdinhs]
+        # words_dict = [binhdinh.to_dict() for binhdinh in binhdinhs]
     if language == 'GiaLai':
-        gialais = gialai.query.filter(gialai.tiengViet.like('%' + searched_word + '%')).limit(10).all()
+        gialais = gialai.query.all()
+
+        # gialais = gialai.query.filter(gialai.tiengViet.like('%' + searched_word + '%')).limit(10).all()
         # print(f"duyly235 {gialais}")
         # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
         words_dict = [gialai.to_dict() for gialai in gialais] 
     if language == 'KonTum':
-        kontums = kontum.query.filter(kontum.tiengViet.like('%' + searched_word + '%')).limit(10).all()
+        kontums = kontum.query.all()
+
+        # kontums = kontum.query.filter(kontum.tiengViet.like('%' + searched_word + '%')).limit(10).all()
         # print(f"duyly201 {kontums}")
         # words = words.order_by(Word.id).paginate(page = page, per_page = word_per_page)
         words_dict = [kontum.to_dict() for kontum in kontums]         
@@ -190,6 +201,15 @@ def search_page():
     # prev_link = None if words.prev_num == None else f'http://localhost:5000/api/search?searched_word={searched_word}&page={words.prev_num}'
     
     # return jsonify({"next": next_link, "previous": prev_link,"results": words_dict})
+    for word in words_dict:
+        word["score"] = fuzz.ratio(searched_word, word["tiengViet"])
+
+    words_dict = sorted(words_dict, key=lambda x: x["score"], reverse=True)
+
+    print(words_dict[:10])
+
+    words_dict = words_dict[:10]
+
     return jsonify({"results": words_dict})
         
 @app.route('/api/related', methods=['GET'])
